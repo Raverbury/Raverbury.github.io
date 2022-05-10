@@ -335,7 +335,7 @@ export default class GameController extends GameObject {
     this.gameCtx.fillStyle = 'green';
     this.gameCtx.fillText(`You win`, 75, 260, this.gameCanvas.width);
     this.gameover = true;
-    this.score += 100000 * this.bombCount + 1000 * this.graze;
+    this.score += 1000000 * this.bombCount + 1000 * this.graze;
     this.scoreCtx.clearRect(0, 0, this.scoreCanvas.width, this.scoreCanvas.height);
     this.scoreCtx.fillText(`Score: ${this.interval * 10 + this.score + this.graze * 500}`, 40, 100, this.scoreCanvas.width);
     this.scoreCtx.fillText(`Grazes: ${this.graze}`, 40, 140, this.scoreCanvas.width);
