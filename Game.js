@@ -13,6 +13,10 @@ const DEG90 = DEG45 * 2;
 const DEG180 = DEG90 * 2;
 
 const audioElement = document.getElementById('gameBGM');
+let grazeSound = new Audio('sounds/graze.mp3');
+let deathSound = new Audio('sounds/death.mp3');
+let pauseSound = new Audio('sounds/pause.mp3');
+let bombSound = new Audio('sounds/bomb.mp3');
 
 class GameObject {
   constructor() {
@@ -35,27 +39,23 @@ export default class GameController extends GameObject {
     this.gameCtx.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     this.gameCtx.fillStyle = 'red';
     this.timeLimit = 60;
+    
     window.addEventListener('graze', function() {
-      let sound = new Audio('sounds/graze.mp3');
-      sound.play();
+      grazeSound.play();
     })
     window.addEventListener('die', function() {
-      let sound = new Audio('sounds/death.mp3');
-      sound.play();
+      deathSound.play();
     })
     window.addEventListener('Halted', function() {
-      let sound = new Audio('sounds/pause.mp3');
-      sound.play();
+      pauseSound.play();
       gameBGM.pause();
     })
     window.addEventListener('', function() {
-      let sound = new Audio('sounds/pause.mp3');
-      sound.play();
+      pauseSound.play();
       gameBGM.play();
     })
     window.addEventListener('bomb', function() {
-      let sound = new Audio('sounds/bomb.mp3');
-      sound.play();
+      bombSound.play();
     })
     audioElement.addEventListener('ended', function() {
       this.currentTime = 0;
@@ -94,7 +94,7 @@ export default class GameController extends GameObject {
     let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
     let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
     let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
-    let velocity = 1;
+    let velocity = 0.85 + 0.2 * (Math.random() - 0.5);
     this.gameObjects.push(new SmallYellowStar(xBase, yBase, xV, yV, velocity));
     this.gameObjects.push(new SmallYellowStar(xBase, yBase, xVi30, yVi30, velocity));
     this.gameObjects.push(new SmallYellowStar(xBase, yBase, xV30, yV30, velocity));
@@ -105,11 +105,16 @@ export default class GameController extends GameObject {
     return 1;
   }
   fireSpreadBarrageV2 = () => {
-    let xBase = this.gameCanvas.width / 2 + this.gameCanvas.width * 0.3;
-    let yBase = 0;
+    let xBase = this.gameCanvas.width / 2 + (this.gameCanvas.width * 0.2) * Math.random() + (this.gameCanvas.width * 0.15);
+    let yBase = (this.gameCanvas.height * 0.15) * Math.random() * 0.8;
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
     let xV = (this.player.x - xBase) / distance;
     let yV = (this.player.y - yBase) / distance;
+    let randomAngle = Math.PI / 20 * (Math.random() - 0.5);
+    let randomXV = xV * Math.cos(randomAngle) - yV * Math.sin(randomAngle);
+    let randomYV = xV * Math.sin(randomAngle) + yV * Math.cos(randomAngle);
+    xV = randomXV;
+    yV = randomYV;
     let xV10 = xV * Math.cos(DEG10) - yV * Math.sin(DEG10);
     let yV10 = xV * Math.sin(DEG10) + yV * Math.cos(DEG10);
     let xVi10 = xV * Math.cos(-DEG10) - yV * Math.sin(-DEG10);
@@ -138,15 +143,15 @@ export default class GameController extends GameObject {
     let yV70 = xV * Math.sin(DEG70) + yV * Math.cos(DEG70);
     let xVi70 = xV * Math.cos(-DEG70) - yV * Math.sin(-DEG70);
     let yVi70 = xV * Math.sin(-DEG70) + yV * Math.cos(-DEG70);
-    let xV80 = xV * Math.cos(DEG80) - yV * Math.sin(DEG80);
-    let yV80 = xV * Math.sin(DEG80) + yV * Math.cos(DEG80);
-    let xVi80 = xV * Math.cos(-DEG80) - yV * Math.sin(-DEG80);
-    let yVi80 = xV * Math.sin(-DEG80) + yV * Math.cos(-DEG80);
-    let xV90 = xV * Math.cos(DEG90) - yV * Math.sin(DEG90);
-    let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
-    let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
-    let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
-    let velocity = 0.8;
+    // let xV80 = xV * Math.cos(DEG80) - yV * Math.sin(DEG80);
+    // let yV80 = xV * Math.sin(DEG80) + yV * Math.cos(DEG80);
+    // let xVi80 = xV * Math.cos(-DEG80) - yV * Math.sin(-DEG80);
+    // let yVi80 = xV * Math.sin(-DEG80) + yV * Math.cos(-DEG80);
+    // let xV90 = xV * Math.cos(DEG90) - yV * Math.sin(DEG90);
+    // let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
+    // let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
+    // let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
+    let velocity = 0.8 + 0.12 * (Math.random() - 0.5);
     let angle = Math.atan2(yV, xV) - DEG90;
     this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV, yV, velocity, angle));
     this.gameObjects.push(new PurpleOfuda(xBase, yBase, xVi10, yVi10, velocity, angle - DEG10));
@@ -163,18 +168,23 @@ export default class GameController extends GameObject {
     this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV60, yV60, velocity, angle + DEG60));
     this.gameObjects.push(new PurpleOfuda(xBase, yBase, xVi70, yVi70, velocity, angle - DEG70));
     this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV70, yV70, velocity, angle + DEG70));
-    this.gameObjects.push(new PurpleOfuda(xBase, yBase, xVi80, yVi80, velocity, angle - DEG80));
-    this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV80, yV80, velocity, angle + DEG80));
-    this.gameObjects.push(new PurpleOfuda(xBase, yBase, xVi90, yVi90, velocity, angle - DEG90));
-    this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV90, yV90, velocity, angle + DEG90));
+    // this.gameObjects.push(new PurpleOfuda(xBase, yBase, xVi80, yVi80, velocity, angle - DEG80));
+    // this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV80, yV80, velocity, angle + DEG80));
+    // this.gameObjects.push(new PurpleOfuda(xBase, yBase, xVi90, yVi90, velocity, angle - DEG90));
+    // this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV90, yV90, velocity, angle + DEG90));
     return 1;
   }
   fireSpreadBarrageV3 = () => {
-    let xBase = this.gameCanvas.width / 2 - this.gameCanvas.width * 0.3;
-    let yBase = 0;
+    let xBase = this.gameCanvas.width / 2 - (this.gameCanvas.width * 0.2) * Math.random() - (this.gameCanvas.width * 0.15);
+    let yBase = (this.gameCanvas.height * 0.15) * Math.random();
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
     let xV = (this.player.x - xBase) / distance;
     let yV = (this.player.y - yBase) / distance;
+    let randomAngle = Math.PI / 20 * (Math.random() - 0.5);
+    let randomXV = xV * Math.cos(randomAngle) - yV * Math.sin(randomAngle);
+    let randomYV = xV * Math.sin(randomAngle) + yV * Math.cos(randomAngle);
+    xV = randomXV;
+    yV = randomYV;
     let xV10 = xV * Math.cos(DEG10) - yV * Math.sin(DEG10);
     let yV10 = xV * Math.sin(DEG10) + yV * Math.cos(DEG10);
     let xVi10 = xV * Math.cos(-DEG10) - yV * Math.sin(-DEG10);
@@ -203,15 +213,15 @@ export default class GameController extends GameObject {
     let yV70 = xV * Math.sin(DEG70) + yV * Math.cos(DEG70);
     let xVi70 = xV * Math.cos(-DEG70) - yV * Math.sin(-DEG70);
     let yVi70 = xV * Math.sin(-DEG70) + yV * Math.cos(-DEG70);
-    let xV80 = xV * Math.cos(DEG80) - yV * Math.sin(DEG80);
-    let yV80 = xV * Math.sin(DEG80) + yV * Math.cos(DEG80);
-    let xVi80 = xV * Math.cos(-DEG80) - yV * Math.sin(-DEG80);
-    let yVi80 = xV * Math.sin(-DEG80) + yV * Math.cos(-DEG80);
-    let xV90 = xV * Math.cos(DEG90) - yV * Math.sin(DEG90);
-    let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
-    let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
-    let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
-    let velocity = 0.8;
+    // let xV80 = xV * Math.cos(DEG80) - yV * Math.sin(DEG80);
+    // let yV80 = xV * Math.sin(DEG80) + yV * Math.cos(DEG80);
+    // let xVi80 = xV * Math.cos(-DEG80) - yV * Math.sin(-DEG80);
+    // let yVi80 = xV * Math.sin(-DEG80) + yV * Math.cos(-DEG80);
+    // let xV90 = xV * Math.cos(DEG90) - yV * Math.sin(DEG90);
+    // let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
+    // let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
+    // let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
+    let velocity = 0.8 + 0.12 * (Math.random() - 0.5);
     let angle = Math.atan2(yV, xV) - DEG90;
     this.gameObjects.push(new RedOfuda(xBase, yBase, xV, yV, velocity, angle));
     this.gameObjects.push(new RedOfuda(xBase, yBase, xVi10, yVi10, velocity, angle - DEG10));
@@ -228,10 +238,10 @@ export default class GameController extends GameObject {
     this.gameObjects.push(new RedOfuda(xBase, yBase, xV60, yV60, velocity, angle + DEG60));
     this.gameObjects.push(new RedOfuda(xBase, yBase, xVi70, yVi70, velocity, angle - DEG70));
     this.gameObjects.push(new RedOfuda(xBase, yBase, xV70, yV70, velocity, angle + DEG70));
-    this.gameObjects.push(new RedOfuda(xBase, yBase, xVi80, yVi80, velocity, angle - DEG80));
-    this.gameObjects.push(new RedOfuda(xBase, yBase, xV80, yV80, velocity, angle + DEG80));
-    this.gameObjects.push(new RedOfuda(xBase, yBase, xVi90, yVi90, velocity, angle - DEG90));
-    this.gameObjects.push(new RedOfuda(xBase, yBase, xV90, yV90, velocity, angle + DEG90));
+    // this.gameObjects.push(new RedOfuda(xBase, yBase, xVi80, yVi80, velocity, angle - DEG80));
+    // this.gameObjects.push(new RedOfuda(xBase, yBase, xV80, yV80, velocity, angle + DEG80));
+    // this.gameObjects.push(new RedOfuda(xBase, yBase, xVi90, yVi90, velocity, angle - DEG90));
+    // this.gameObjects.push(new RedOfuda(xBase, yBase, xV90, yV90, velocity, angle + DEG90));
     return 1;
   }
   fireStraightBarrageV1 = () => {
@@ -260,17 +270,17 @@ export default class GameController extends GameObject {
     let yVi5 = xV * Math.sin(-DEG5) + yV * Math.cos(-DEG5);
     let velocity = 3;
     this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV, yV, velocity));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV, yV, velocity * 0.8));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV, yV, velocity * 0.6));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV, yV, velocity * 0.4));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV, yV, velocity * 0.85));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV, yV, velocity * 0.7));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV, yV, velocity * 0.55));
     this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV5, yV5, velocity));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV5, yV5, velocity * 0.8));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV5, yV5, velocity * 0.6));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV5, yV5, velocity * 0.4));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV5, yV5, velocity * 0.85));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV5, yV5, velocity * 0.7));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xV5, yV5, velocity * 0.55));
     this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xVi5, yVi5, velocity));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xVi5, yVi5, velocity * 0.8));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xVi5, yVi5, velocity * 0.6));
-    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xVi5, yVi5, velocity * 0.4));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xVi5, yVi5, velocity * 0.85));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xVi5, yVi5, velocity * 0.7));
+    this.gameObjects.push(new PurpleBallBullet(xBase, yBase, xVi5, yVi5, velocity * 0.55));
     return 1;
   }
   fireAimedBarrageV2 = () => {
@@ -287,15 +297,15 @@ export default class GameController extends GameObject {
   update = () => {
     if (this.pause) return;
     // barrages
-    (this.interval < (45 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.interval % (3 * this.frameRate) != 0 && this.fireSpreadBarrageV1());
-    (this.interval >= (10 * this.frameRate) && this.interval % (2 * this.frameRate) == 0 && this.fireSpreadBarrageV2());
+    (this.interval < (40 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.interval % (3 * this.frameRate) != 0 && this.fireSpreadBarrageV1());
+    (this.interval >= (13 * this.frameRate) && this.interval % (2 * this.frameRate) == 0 && this.fireSpreadBarrageV2());
     (this.interval >= (13 * this.frameRate) && this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.fireSpreadBarrageV3());
-    (this.interval >= (43 * this.frameRate) && this.interval % (1.5 * this.frameRate) == (0.75 * this.frameRate) && this.fireSpreadBarrageV2());
-    (this.interval >= (40 * this.frameRate) && this.interval % (1.5 * this.frameRate) == 0 && this.fireSpreadBarrageV3());
-    (this.interval > (5 * this.frameRate) && this.interval < (45 * this.frameRate) && this.interval % (5 * this.frameRate) == 0 && this.fireStraightBarrageV1());
+    (this.interval >= (35 * this.frameRate) && this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.fireSpreadBarrageV2());
+    (this.interval >= (35 * this.frameRate) && this.interval % (2 * this.frameRate) == 0 && this.fireSpreadBarrageV3());
+    (this.interval > (5 * this.frameRate) && this.interval < (40 * this.frameRate) && this.interval % (5 * this.frameRate) == 0 && this.fireStraightBarrageV1());
     (this.interval < (45 * this.frameRate) && this.interval % (2 * this.frameRate) < (0.5 * this.frameRate) && this.interval % (0.05 * this.frameRate) == 0 && this.fireAimedBarrageV2());
-    (this.interval >= (10 * this.frameRate) && this.interval < (43 * this.frameRate) && this.interval % (3 * this.frameRate) == 0 && this.fireAimedBarrageV1());
-    (this.interval >= (50 * this.frameRate) && this.interval % (1 * this.frameRate) < (0.5 * this.frameRate) && this.interval % (0.05 * this.frameRate) == 0 && this.fireAimedBarrageV2());
+    (this.interval >= (10 * this.frameRate) && this.interval < (40 * this.frameRate) && this.interval % (3 * this.frameRate) == 0 && this.fireAimedBarrageV1());
+    (this.interval >= (53 * this.frameRate) && this.interval % (1 * this.frameRate) < (0.7 * this.frameRate) && this.interval % (0.1 * this.frameRate) == 0 && this.fireAimedBarrageV2());
     // normal game tick stuff
     this.interval += 1;
     this.gameCtx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
@@ -332,6 +342,9 @@ export default class GameController extends GameObject {
   }
   stopGameWin = () => {
     clearInterval(this.gameLoop);
+    this.clearScreen();
+    this.gameCtx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    this.gameCtx.drawImage(document.getElementById('background'), 0, 0, this.gameCanvas.width, this.gameCanvas.height);
     this.gameCtx.fillStyle = 'green';
     this.gameCtx.fillText(`You win`, 75, 260, this.gameCanvas.width);
     this.gameover = true;
@@ -346,7 +359,7 @@ export default class GameController extends GameObject {
   intersects = (o1, o2) => {
     let distance = Math.sqrt(Math.pow(o1.x - o2.x, 2) + Math.pow(o1.y - o2.y, 2));
     let deathDistance = o1.r + o2.r;
-    let grazeDistance = o1.r * 4 + o2.r;
+    let grazeDistance = o1.r * 4 + o2.r * 2;
     (distance < deathDistance && this.stopGameLose());
     // true if grazed, false if not
     return (distance < grazeDistance);
@@ -373,7 +386,7 @@ export default class GameController extends GameObject {
     return 1;
   }
   clearScreen = () => {
-    this.score += this.gameObjects.length * (500 + 10 * this.graze);
+    this.score += this.gameObjects.length * (200 + 11 * this.graze);
     this.gameObjects = [];
     return 1;
   }
