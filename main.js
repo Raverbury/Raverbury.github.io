@@ -5,6 +5,7 @@ var W = 'KeyW';
 var A = 'KeyA';
 var S = 'KeyS';
 var D = 'KeyD';
+var X = 'KeyX';
 var LS = 'ShiftLeft';
 var RS = 'ShiftRight';
 var AU = 'ArrowUp';
@@ -28,9 +29,8 @@ function init() {
     stop();
   })
   window.addEventListener('keypress', (e) => {
-    if (e.code == 'Space') {
-      toggle();
-    }
+    (e.code == 'Space' && toggle());
+    (e.code == X && game.playerBomb());
   })
   setInterval(processKey, 1000 / 90);
   new bootstrap.Modal(document.getElementById('instructionModal'), {}).show();
@@ -38,6 +38,7 @@ function init() {
 
 function toggle() {
   game.toggle();
+  return 1;
 }
 
 function processKey() {
