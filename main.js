@@ -18,6 +18,8 @@ keys[W] = keys[A] = keys[S] = keys[D] = keys[LS] = keys[RS] = keys[AU] = keys[AL
 window.onload = init();
 
 function init() {
+  var modal = new bootstrap.Modal(document.getElementById('instructionModal'), {});
+  modal.show();
   game = new GameController();
   window.addEventListener('keydown', (e) => {
     keys = (keys || []);
@@ -29,11 +31,10 @@ function init() {
     stop();
   })
   window.addEventListener('keypress', (e) => {
-    (e.code == 'Space' && toggle());
+    (e.code == 'Space' && toggle() && modal.hide());
     (e.code == X && game.playerBomb());
   })
   setInterval(processKey, 1000 / 90);
-  new bootstrap.Modal(document.getElementById('instructionModal'), {}).show();
 }
 
 function toggle() {

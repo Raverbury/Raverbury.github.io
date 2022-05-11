@@ -1,0 +1,12 @@
+body {
+  background-color: lightblue;
+}
+#gameCanvas {
+  border: 1px solid greenyellow;
+}
+#scoreCanvas {
+  border: 1px solid greenyellow;
+}
+.hidden {
+  display: none;
+}
