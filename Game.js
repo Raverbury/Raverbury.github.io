@@ -24,38 +24,49 @@ const PLAYERSPRITEFOCUSED = document.getElementById('player_sprite_focused');
 const PLAYERSPRITEUNFOCUSED = document.getElementById('player_sprite_unfocused');
 const PLAYERSPRITEBASE = document.getElementById('player_sprite_base');
 
-let grazeSound = new Howl({
+const grazeSound = new Howl({
   src: ['sounds/graze.mp3'],
   html5: true,
 });
 
-let pauseSound = new Howl({
+const pauseSound = new Howl({
   src: ['sounds/pause.mp3'],
   html5: true,
 });
 
-let bombSound = new Howl({
+const bombSound = new Howl({
   src: ['sounds/bomb.mp3'],
   html5: true,
 });
 
-let deathSound = new Howl({
+const deathSound = new Howl({
   src: ['sounds/death.mp3'],
   html5: true,
 });
 
-let sound = new Howl({
+const sound = new Howl({
   src: ['sounds/main.mp3'],
   html5: true,
   loop: true,
 });
+
+const timeoutSound = [
+  new Howl({
+    src: ['sounds/timeout_1.mp3'],
+    html5: true,
+  }),
+  new Howl({
+    src: ['sounds/timeout_2.mp3'],
+    html5: true,
+  })
+];
 
 class GameObject {
   constructor() {
     this.frameRate = 60;
     this.gameCanvas = document.getElementById('gameCanvas');
     this.gameCtx = this.gameCanvas.getContext('2d');
-    this.gameCtx.font = '80px Arial';
+    this.gameCtx.font = '80px arial';
     this.gameCtx.fillStyle = 'red';
     this.scoreCanvas = document.getElementById('scoreCanvas');
     this.scoreCtx = this.scoreCanvas.getContext('2d');
@@ -71,36 +82,42 @@ export default class GameController extends GameObject {
     this.gameCtx.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     this.gameCtx.fillStyle = 'red';
     this.timeLimit = 60;
-    
-    window.addEventListener('graze', function() {
+    this.timer = new Timer(0, 0, this.timeLimit);
+
+    window.addEventListener('graze', function () {
       grazeSound.play();
     })
-    window.addEventListener('die', function() {
+    window.addEventListener('die', function () {
       deathSound.play();
     })
-    window.addEventListener('Halted', function() {
+    window.addEventListener('Halted', function () {
       pauseSound.play();
       (sound.playing && sound.pause());
     })
-    window.addEventListener('', function() {
+    window.addEventListener('', function () {
       pauseSound.play();
       (!sound.playing() && sound.play());
     })
-    window.addEventListener('bomb', function() {
+    window.addEventListener('timeout', function () {
+      timeoutSound[+(Math.random() > 0.5)].play();
+    })
+    window.addEventListener('bomb', function () {
       bombSound.play();
     })
     this.startGame();
   }
   startGame = () => {
-    this.interval = 0;
+    this.elapsed = 0;
     this.score = 0;
     this.graze = 0;
     this.pause = true;
     this.gameover = false;
-    this.gameObjects =  [];
+    this.gameObjects = [];
+    this.timer.restart();
 
     this.player = new Player(this.gameCanvas.width / 2, this.gameCanvas.height * 0.8);
     this.bombCount = 3;
+    this.bombString = '\u2606\u2606\u2606';
 
     this.gameLoop = setInterval(this.update, 1000 / this.frameRate);
   }
@@ -122,7 +139,7 @@ export default class GameController extends GameObject {
     let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
     let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
     let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
-    let velocity = 0.85;
+    let velocity = 0.9;
     this.gameObjects.push(new SmallYellowStar(xBase, yBase, xV, yV, velocity + 0.2 * (Math.random() - 0.5)));
     this.gameObjects.push(new SmallYellowStar(xBase, yBase, xVi30, yVi30, velocity + 0.2 * (Math.random() - 0.5)));
     this.gameObjects.push(new SmallYellowStar(xBase, yBase, xV30, yV30, velocity + 0.2 * (Math.random() - 0.5)));
@@ -133,12 +150,12 @@ export default class GameController extends GameObject {
     return 1;
   }
   firePurpleOfuda = () => {
-    let xBase = this.gameCanvas.width / 2 + (this.gameCanvas.width * 0.2) * Math.random() + (this.gameCanvas.width * 0.15);
-    let yBase = (this.gameCanvas.height * 0.15) * Math.random() * 0.8;
+    let xBase = this.gameCanvas.width / 3 + (this.gameCanvas.width * 0.5) * Math.random() + (this.gameCanvas.width * 0.1);
+    let yBase = (this.gameCanvas.height * 0.2) * Math.random();
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
     let xV = (this.player.x - xBase) / distance;
     let yV = (this.player.y - yBase) / distance;
-    let randomAngle = Math.PI / 20 * (Math.random() - 0.5);
+    let randomAngle = DEG5 * (Math.random() - 0.5);
     let randomXV = xV * Math.cos(randomAngle) - yV * Math.sin(randomAngle);
     let randomYV = xV * Math.sin(randomAngle) + yV * Math.cos(randomAngle);
     xV = randomXV;
@@ -179,7 +196,7 @@ export default class GameController extends GameObject {
     // let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
     // let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
     // let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
-    let velocity = 0.8 + 0.12 * (Math.random() - 0.5);
+    let velocity = 0.9 + 0.2 * (Math.random() - 0.5);
     let angle = Math.atan2(yV, xV) - DEG90;
     this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV, yV, velocity, angle));
     this.gameObjects.push(new PurpleOfuda(xBase, yBase, xVi10, yVi10, velocity, angle - DEG10));
@@ -203,12 +220,12 @@ export default class GameController extends GameObject {
     return 1;
   }
   fireRedOfuda = () => {
-    let xBase = this.gameCanvas.width / 2 - (this.gameCanvas.width * 0.2) * Math.random() - (this.gameCanvas.width * 0.15);
-    let yBase = (this.gameCanvas.height * 0.15) * Math.random();
+    let xBase = this.gameCanvas.width / 3 * 2 - (this.gameCanvas.width * 0.5) * Math.random() - (this.gameCanvas.width * 0.1);
+    let yBase = (this.gameCanvas.height * 0.2) * Math.random();
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
     let xV = (this.player.x - xBase) / distance;
     let yV = (this.player.y - yBase) / distance;
-    let randomAngle = Math.PI / 20 * (Math.random() - 0.5);
+    let randomAngle = DEG5 * (Math.random() - 0.5);
     let randomXV = xV * Math.cos(randomAngle) - yV * Math.sin(randomAngle);
     let randomYV = xV * Math.sin(randomAngle) + yV * Math.cos(randomAngle);
     xV = randomXV;
@@ -249,7 +266,7 @@ export default class GameController extends GameObject {
     // let yV90 = xV * Math.sin(DEG90) + yV * Math.cos(DEG90);
     // let xVi90 = xV * Math.cos(-DEG90) - yV * Math.sin(-DEG90);
     // let yVi90 = xV * Math.sin(-DEG90) + yV * Math.cos(-DEG90);
-    let velocity = 0.8 + 0.12 * (Math.random() - 0.5);
+    let velocity = 0.9 + 0.2 * (Math.random() - 0.5);
     let angle = Math.atan2(yV, xV) - DEG90;
     this.gameObjects.push(new RedOfuda(xBase, yBase, xV, yV, velocity, angle));
     this.gameObjects.push(new RedOfuda(xBase, yBase, xVi10, yVi10, velocity, angle - DEG10));
@@ -407,29 +424,30 @@ export default class GameController extends GameObject {
   update = () => {
     if (this.pause) return;
     // barrages
-    (this.interval < (25 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.interval % (10 * this.frameRate) != 0 && this.fireStarBarrage());
-    (this.interval >= (13 * this.frameRate) && this.interval < (41 * this.frameRate)&& this.interval % (2 * this.frameRate) == 0 && this.firePurpleOfuda());
-    (this.interval >= (13 * this.frameRate) && this.interval < (41 * this.frameRate)&& this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.fireRedOfuda());
-    (this.interval >= (26 * this.frameRate) && this.interval < (41 * this.frameRate) && this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.firePurpleOfuda());
-    (this.interval >= (26 * this.frameRate) && this.interval < (41 * this.frameRate) && this.interval % (2 * this.frameRate) == 0 && this.fireRedOfuda());
-    (this.interval > (38 * this.frameRate) && this.interval % (3 * this.frameRate) == 0 && this.fireStraightBarrageV1());
-    (this.interval > (47 * this.frameRate) && this.interval % (3 * this.frameRate) == (0 * this.frameRate) && this.fireConvergingButterflyBarrage());
-    (this.interval > (47 * this.frameRate) && this.interval % (3 * this.frameRate) == (1.5 * this.frameRate) && this.fireDivergingButterflyBarrage());
-    (this.interval >= (2 * this.frameRate) && this.interval < (30 * this.frameRate) && this.interval % (2 * this.frameRate) < (0.5 * this.frameRate) && this.interval % (0.05 * this.frameRate) == 0 && this.fireAimedBarrageV2());
-    (this.interval >= (10 * this.frameRate) && this.interval < (28 * this.frameRate) && this.interval % (3 * this.frameRate) == 0 && this.fireAimedBarrageV1());
-    // (this.interval >= (53 * this.frameRate) && this.interval % (1 * this.frameRate) < (0.7 * this.frameRate) && this.interval % (0.1 * this.frameRate) == 0 && this.fireAimedBarrageV2());
-    (this.interval >= (42 * this.frameRate) && this.interval < (46 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.fireAimedBarrageV3());
-    (this.interval >= (46 * this.frameRate) && this.interval % (0.2 * this.frameRate) == 0 && this.fireAimedBarrageV4());
+    (this.elapsed < (25 * this.frameRate) && this.elapsed % (0.5 * this.frameRate) == 0 && this.elapsed % (10 * this.frameRate) != 0 && this.fireStarBarrage());
+    (this.elapsed >= (13 * this.frameRate) && this.elapsed < (26 * this.frameRate) && this.elapsed % (2 * this.frameRate) == 0 && this.firePurpleOfuda());
+    (this.elapsed >= (13 * this.frameRate) && this.elapsed < (26 * this.frameRate) && this.elapsed % (2 * this.frameRate) == (1 * this.frameRate) && this.fireRedOfuda());
+    (this.elapsed >= (26 * this.frameRate) && this.elapsed < (41 * this.frameRate) && this.elapsed % (1.2 * this.frameRate) == (0.6 * this.frameRate) && this.firePurpleOfuda());
+    (this.elapsed >= (26 * this.frameRate) && this.elapsed < (41 * this.frameRate) && this.elapsed % (1.2 * this.frameRate) == 0 && this.fireRedOfuda());
+    (this.elapsed > (38 * this.frameRate) && this.elapsed % (3 * this.frameRate) == 0 && this.fireStraightBarrageV1());
+    (this.elapsed > (47 * this.frameRate) && this.elapsed % (4 * this.frameRate) == (0 * this.frameRate) && this.fireConvergingButterflyBarrage());
+    (this.elapsed > (47 * this.frameRate) && this.elapsed % (4 * this.frameRate) == (2 * this.frameRate) && this.fireDivergingButterflyBarrage());
+    (this.elapsed >= (2 * this.frameRate) && this.elapsed < (30 * this.frameRate) && this.elapsed % (2 * this.frameRate) < (0.5 * this.frameRate) && this.elapsed % (0.05 * this.frameRate) == 0 && this.fireAimedBarrageV2());
+    (this.elapsed >= (10 * this.frameRate) && this.elapsed < (28 * this.frameRate) && this.elapsed % (3 * this.frameRate) == 0 && this.fireAimedBarrageV1());
+    // (this.elapsed >= (53 * this.frameRate) && this.elapsed % (1 * this.frameRate) < (0.7 * this.frameRate) && this.elapsed % (0.1 * this.frameRate) == 0 && this.fireAimedBarrageV2());
+    (this.elapsed >= (42 * this.frameRate) && this.elapsed < (46 * this.frameRate) && this.elapsed % (0.5 * this.frameRate) == 0 && this.fireAimedBarrageV3());
+    (this.elapsed >= (46 * this.frameRate) && this.elapsed % (0.2 * this.frameRate) == 0 && this.fireAimedBarrageV4());
     // normal game tick stuff
-    this.interval += 1;
+    (this.elapsed >= (50 * this.frameRate) && this.elapsed % (1 * this.frameRate) == 0 && window.dispatchEvent(new Event('timeout')));
+    this.elapsed += 1;
     this.gameCtx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
     this.gameCtx.drawImage(BACKGROUND, 0, 0, this.gameCanvas.width, this.gameCanvas.height);
     this.scoreCtx.clearRect(0, 0, this.scoreCanvas.width, this.scoreCanvas.height);
-    this.scoreCtx.fillText(`Score: ${this.interval * 10 + this.score + this.graze * 500}`, 40, 100, this.scoreCanvas.width);
+    this.scoreCtx.fillText(`Score: ${this.elapsed * 10 + this.score + this.graze * 500}`, 40, 100, this.scoreCanvas.width);
     this.scoreCtx.fillText(`Grazes: ${this.graze}`, 40, 140, this.scoreCanvas.width);
-    this.scoreCtx.fillText(`Bombs: ${this.bombCount}`, 40, 180, this.scoreCanvas.width);
-    this.scoreCtx.fillText(`Time left: ${this.timeLimit - Math.floor(this.interval / this.frameRate)}`, 40, 220, this.scoreCanvas.width);
+    this.scoreCtx.fillText(`Bombs: ${this.bombString}`, 40, 180, this.scoreCanvas.width);
     // update everything, main logic, move and collision
+    this.timer.update();
     this.player.update();
     for (let index = 0; index < this.gameObjects.length; index++) {
       let obj = this.gameObjects[index];
@@ -444,7 +462,7 @@ export default class GameController extends GameObject {
         this.gameObjects.splice(index, 1);
       }
     }
-    (((this.timeLimit * this.frameRate) <= this.interval) && this.stopGameWin());
+    (((this.timeLimit * this.frameRate) <= this.elapsed) && this.stopGameWin());
   }
   stopGameLose = () => {
     clearInterval(this.gameLoop);
@@ -465,10 +483,9 @@ export default class GameController extends GameObject {
     this.gameover = true;
     this.score += 1000000 * this.bombCount + 1000 * this.graze;
     this.scoreCtx.clearRect(0, 0, this.scoreCanvas.width, this.scoreCanvas.height);
-    this.scoreCtx.fillText(`Score: ${this.interval * 10 + this.score + this.graze * 500}`, 40, 100, this.scoreCanvas.width);
+    this.scoreCtx.fillText(`Score: ${this.elapsed * 10 + this.score + this.graze * 500}`, 40, 100, this.scoreCanvas.width);
     this.scoreCtx.fillText(`Grazes: ${this.graze}`, 40, 140, this.scoreCanvas.width);
-    this.scoreCtx.fillText(`Bombs: ${this.bombCount}`, 40, 180, this.scoreCanvas.width);
-    this.scoreCtx.fillText(`Time left: ${this.timeLimit - Math.floor(this.interval / this.frameRate)}`, 40, 220, this.scoreCanvas.width);
+    this.scoreCtx.fillText(`Bombs: ${this.bombString}`, 40, 180, this.scoreCanvas.width);
     return 1;
   }
   intersects = (o1, o2) => {
@@ -492,13 +509,13 @@ export default class GameController extends GameObject {
     window.dispatchEvent(new Event(text[+this.pause]));
     this.gameCtx.fillStyle = 'red';
     this.gameCtx.fillText(`${text[+this.pause]}`, 100, 260, this.gameCanvas.width);
-    
+
   }
   playerMove = (x, y, focus) => {
     this.player.move(+(this.pause == false) * x + 0, +(this.pause == false) * y + 0, +(this.pause == false) * focus + 0);
   }
   playerBomb = () => {
-    (this.pause == false && this.bombCount > 0 && this.bombCount-- && this.clearScreen() && window.dispatchEvent(new Event('bomb')));
+    (this.pause == false && this.bombCount > 0 && this.bombCount-- && this.clearScreen() && this.gameObjects.push(new SpellcardText(0, 0, "Art Sign \"Blank Canvas\"")) && window.dispatchEvent(new Event('bomb')) && (this.bombString = this.bombString.substring(0, this.bombCount)));
     return 1;
   }
   clearScreen = () => {
@@ -584,8 +601,7 @@ class Bullet extends Entity {
     this.yVector = yV;
     this.realHitbox = 0.7;
   }
-  draw = () => {
-  }
+  draw = () => {}
   move = () => {
     this.x += this.xVector * this.velocity;
     this.y += this.yVector * this.velocity;
@@ -624,7 +640,7 @@ class PurpleOfuda extends Bullet {
   constructor(x, y, xV, yV, vel, angle) {
     super(x, y, xV, yV, vel);
     this.radius = 7;
-    this.realHitbox = 0.4;
+    this.realHitbox = 0.7;
     this.angle = angle;
   }
   draw = () => {
@@ -640,7 +656,7 @@ class RedOfuda extends Bullet {
   constructor(x, y, xV, yV, vel, angle) {
     super(x, y, xV, yV, vel);
     this.radius = 7;
-    this.realHitbox = 0.4;
+    this.realHitbox = 0.7;
     this.angle = angle;
   }
   draw = () => {
@@ -677,7 +693,7 @@ class LightblueArrowhead extends Bullet {
   constructor(x, y, xV, yV, vel, angle) {
     super(x, y, xV, yV, vel);
     this.radius = 8;
-    this.realHitbox = 0.4;
+    this.realHitbox = 0.6;
     this.rotateAngle = (Math.random() + 0.002) * 0.05;
     this.rotateCurrent = Math.random() * Math.PI;
     this.angle = angle;
@@ -697,8 +713,8 @@ class LightblueArrowhead extends Bullet {
 class GreenButterfly extends Bullet {
   constructor(x, y, xV, yV, vel, angle) {
     super(x, y, xV, yV, vel);
-    this.radius = 8;
-    this.realHitbox = 0.4;
+    this.radius = 14;
+    this.realHitbox = 0.6;
     this.rotateAngle = (Math.random() + 0.002) * 0.05;
     this.rotateCurrent = Math.random() * Math.PI;
     this.angle = angle;
@@ -712,5 +728,53 @@ class GreenButterfly extends Bullet {
     // this.gameCtx.rotate(-this.rotateCurrent);
     // this.gameCtx.translate(-this.x, -this.y);
     this.gameCtx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+}
+
+class SpellcardText extends Entity {
+  constructor(x, y, spellcardName) {
+    super(x, y);
+    this.radius = 0;
+    this.realHitbox = 0;
+    this.timeToLive = 3 * this.frameRate;
+    this.keepAlive = true;
+    this.spellcardName = spellcardName;
+  }
+  draw = () => {
+    this.gameCtx.font = '17px cursive';
+    this.gameCtx.fillStyle = 'white';
+    this.gameCtx.fillText(`${this.spellcardName}`, 10, 470, this.gameCanvas.width);
+    this.gameCtx.font = '80px arial';
+    this.gameCtx.fillStyle = 'red';
+  }
+  update = () => {
+    this.draw();
+    this.timeToLive -= 1;
+    this.keepAlive = this.timeToLive > 0;
+  }
+}
+
+class Timer extends Entity {
+  constructor(x, y, timeLimit) {
+    super(x, y);
+    this.radius = 0;
+    this.realHitbox = 0;
+    this.keepAlive = 1;
+    this.timeLimit = timeLimit;
+    this.elapsed = 0;
+  }
+  restart = () => {
+    this.elapsed = 0;
+  }
+  draw = () => {
+    this.gameCtx.font = '16px cursive';
+    this.gameCtx.fillStyle = 'white';
+    this.gameCtx.fillText(`${this.timeLimit - Math.floor(this.elapsed / this.frameRate)}`, 395, 20, this.gameCanvas.width);
+    this.gameCtx.font = '80px arial';
+    this.gameCtx.fillStyle = 'red';
+  }
+  update = () => {
+    this.elapsed += 1;
+    this.draw();
   }
 }
