@@ -1,17 +1,17 @@
 import GameController from './Game.js';
 
 var game = null;
-var W = 'KeyW';
-var A = 'KeyA';
-var S = 'KeyS';
-var D = 'KeyD';
-var X = 'KeyX';
-var LS = 'ShiftLeft';
-var RS = 'ShiftRight';
-var AU = 'ArrowUp';
-var AL = 'ArrowLeft';
-var AD = 'ArrowDown';
-var AR = 'ArrowRight';
+const W = 'KeyW';
+const A = 'KeyA';
+const S = 'KeyS';
+const D = 'KeyD';
+const X = 'KeyX';
+const LS = 'ShiftLeft';
+const RS = 'ShiftRight';
+const AU = 'ArrowUp';
+const AL = 'ArrowLeft';
+const AD = 'ArrowDown';
+const AR = 'ArrowRight';
 var keys = {};
 keys[W] = keys[A] = keys[S] = keys[D] = keys[LS] = keys[RS] = keys[AU] = keys[AL] = keys[AD] = keys[AR] = false;
 
