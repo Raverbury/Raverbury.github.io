@@ -19,6 +19,9 @@ const REDOFUDA = document.getElementById('red_ofuda');
 const PURPLEOFUDA = document.getElementById('purple_ofuda');
 const BLACKOUTLINEDBALL = document.getElementById('black_outlined_ball');
 const BACKGROUND = document.getElementById('background');
+const PLAYERSPRITEFOCUSED = document.getElementById('player_sprite_focused');
+const PLAYERSPRITEUNFOCUSED = document.getElementById('player_sprite_unfocused');
+const PLAYERSPRITEBASE = document.getElementById('player_sprite_base');
 
 let grazeSound = new Howl({
   src: ['sounds/graze.mp3'],
@@ -477,27 +480,35 @@ class Entity extends GameObject {
 class Player extends Entity {
   constructor(x, y) {
     super(x, y);
-    this.radius = 5;
+    this.radius = 4;
     this.velocity = 1.8;
     this.focusedSlowdown = 0.65;
-    this.colorTable = {};
-    this.color = "white";
-    this.colorTable[0] = "white";
-    this.colorTable[1] = "red";
+    this.spriteTable = {};
+    this.spriteTable[0] = PLAYERSPRITEUNFOCUSED;
+    this.spriteTable[1] = PLAYERSPRITEFOCUSED;
+    this.currentSprite = this.spriteTable[0];
+    this.rotateCurrent = 0;
+    this.rotateAngle = DEG5 / 5 * 2;
     this.realHitbox = 0.8;
   }
   draw = () => {
-    this.gameCtx.fillStyle = this.color;
-    this.gameCtx.beginPath();
-    this.gameCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    this.gameCtx.fill();
+    this.gameCtx.translate(this.x, this.y);
+    this.gameCtx.rotate(this.rotateCurrent);
+    this.gameCtx.translate(-this.x, -this.y);
+    this.gameCtx.drawImage(PLAYERSPRITEBASE, this.x - 32, this.y - 32, 64, 64);
+    this.gameCtx.translate(this.x, this.y);
+    this.gameCtx.rotate(this.rotateCurrent);
+    this.gameCtx.translate(-this.x, -this.y);
+    this.gameCtx.drawImage(this.currentSprite, this.x - 32, this.y - 32, 64, 64);
+    this.rotateCurrent += this.rotateAngle;
+    this.gameCtx.setTransform(1, 0, 0, 1, 0, 0);
   }
   move = (x, y, focus) => {
     let xLeftBound = 0 + this.radius;
     let xRightBound = this.gameCanvas.width - this.radius;
     let yUpperBound = 0 + this.radius;
     let yLowerBound = this.gameCanvas.height - this.radius;
-    this.color = this.colorTable[focus];
+    this.currentSprite = this.spriteTable[focus];
     this.x += x * this.velocity * (1 - focus * this.focusedSlowdown);
     this.y += y * this.velocity * (1 - focus * this.focusedSlowdown);
     this.x = (this.x < xLeftBound) * xLeftBound + (this.x > xRightBound) * xRightBound + (this.x >= xLeftBound && this.x <= xRightBound) * this.x;
