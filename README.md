@@ -1,6 +1,6 @@
 # Raverbury.github.io or Totally Not Another Touhou Ripoff
 
-You can give it a whirl [here](https://raverbury.github.io/)
+You can give it a whirl [here](https://raverbury.github.io/).
 
 Something of a 4fun side project as practice when learning JS. The name speaks for itself.
 
