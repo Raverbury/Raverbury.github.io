@@ -18,6 +18,7 @@ const YELLOWSTARSMALL = document.getElementById('yellow_star_small');
 const REDOFUDA = document.getElementById('red_ofuda');
 const PURPLEOFUDA = document.getElementById('purple_ofuda');
 const BLACKOUTLINEDBALL = document.getElementById('black_outlined_ball');
+const GREENBUTTERFLY = document.getElementById('green_butterfly');
 const BACKGROUND = document.getElementById('background');
 const PLAYERSPRITEFOCUSED = document.getElementById('player_sprite_focused');
 const PLAYERSPRITEUNFOCUSED = document.getElementById('player_sprite_unfocused');
@@ -103,7 +104,7 @@ export default class GameController extends GameObject {
 
     this.gameLoop = setInterval(this.update, 1000 / this.frameRate);
   }
-  fireSpreadBarrageV1 = () => {
+  fireStarBarrage = () => {
     let xBase = this.gameCanvas.width / 2;
     let yBase = 0;
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
@@ -131,7 +132,7 @@ export default class GameController extends GameObject {
     this.gameObjects.push(new SmallYellowStar(xBase, yBase, xV90, yV90, velocity + 0.2 * (Math.random() - 0.5)));
     return 1;
   }
-  fireSpreadBarrageV2 = () => {
+  firePurpleOfuda = () => {
     let xBase = this.gameCanvas.width / 2 + (this.gameCanvas.width * 0.2) * Math.random() + (this.gameCanvas.width * 0.15);
     let yBase = (this.gameCanvas.height * 0.15) * Math.random() * 0.8;
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
@@ -201,7 +202,7 @@ export default class GameController extends GameObject {
     // this.gameObjects.push(new PurpleOfuda(xBase, yBase, xV90, yV90, velocity, angle + DEG90));
     return 1;
   }
-  fireSpreadBarrageV3 = () => {
+  fireRedOfuda = () => {
     let xBase = this.gameCanvas.width / 2 - (this.gameCanvas.width * 0.2) * Math.random() - (this.gameCanvas.width * 0.15);
     let yBase = (this.gameCanvas.height * 0.15) * Math.random();
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
@@ -285,6 +286,48 @@ export default class GameController extends GameObject {
     this.gameObjects.push(new BlackOutlinedBall(xBase - this.gameCanvas.width * 0.45, yBase, xV, yV, velocity));
     return 1;
   }
+  fireConvergingButterflyBarrage = () => {
+    let leftXBase = 0;
+    let rightXBase = this.gameCanvas.width;
+    let yBase = this.gameCanvas.height;
+    let velocity = 1.5;
+    const DIAGX = Math.cos(DEG20);
+    const DIAGY = Math.sin(DEG20);
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.65, DIAGX, DIAGY, velocity, -DEG90 - DEG20));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.72, 1, 0, velocity, -DEG90));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.79, DIAGX, -DIAGY, velocity, -DEG90 + DEG20));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.35, DIAGX, -DIAGY, velocity, -DEG90 + DEG20));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.28, 1, 0, velocity, -DEG90));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.21, DIAGX, DIAGY, velocity, -DEG90 - DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.65, -DIAGX, DIAGY, velocity, DEG90 - DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.72, -1, 0, velocity, DEG90));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.79, -DIAGX, -DIAGY, velocity, DEG90 + DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.35, -DIAGX, -DIAGY, velocity, DEG90 + DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.28, -1, 0, velocity, DEG90));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.21, -DIAGX, DIAGY, velocity, DEG90 - DEG20));
+    return 1;
+  }
+  fireDivergingButterflyBarrage = () => {
+    let leftXBase = 0;
+    let rightXBase = this.gameCanvas.width;
+    let yBase = this.gameCanvas.height;
+    let velocity = 1.5;
+    const DIAGX = Math.cos(DEG20);
+    const DIAGY = Math.sin(DEG20);
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.65, DIAGX, -DIAGY, velocity, -DEG90 + DEG20));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.72, 1, 0, velocity, -DEG90));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.79, DIAGX, DIAGY, velocity, -DEG90 - DEG20));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.35, DIAGX, DIAGY, velocity, -DEG90 - DEG20));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.28, 1, 0, velocity, -DEG90));
+    this.gameObjects.push(new GreenButterfly(leftXBase, yBase * 0.21, DIAGX, -DIAGY, velocity, -DEG90 + DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.65, -DIAGX, -DIAGY, velocity, DEG90 + DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.72, -1, 0, velocity, DEG90));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.79, -DIAGX, DIAGY, velocity, DEG90 - DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.35, -DIAGX, DIAGY, velocity, DEG90 - DEG20));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.28, -1, 0, velocity, DEG90));
+    this.gameObjects.push(new GreenButterfly(rightXBase, yBase * 0.21, -DIAGX, -DIAGY, velocity, DEG90 + DEG20));
+    return 1;
+  }
   fireAimedBarrageV1 = () => {
     let xBase = this.gameCanvas.width / 2;
     let yBase = 0;
@@ -344,32 +387,39 @@ export default class GameController extends GameObject {
     let distance = Math.sqrt(Math.pow(this.player.x - xBase, 2) + Math.pow(this.player.y - yBase, 2));
     let xV = (this.player.x - xBase) / distance;
     let yV = (this.player.y - yBase) / distance;
-    let xV45 = xV * Math.cos(DEG45) - yV * Math.sin(DEG45);
-    let yV45 = xV * Math.sin(DEG45) + yV * Math.cos(DEG45);
-    let xVi45 = xV * Math.cos(-DEG45) - yV * Math.sin(-DEG45);
-    let yVi45 = xV * Math.sin(-DEG45) + yV * Math.cos(-DEG45);
+    let xV60 = xV * Math.cos(DEG60) - yV * Math.sin(DEG60);
+    let yV60 = xV * Math.sin(DEG60) + yV * Math.cos(DEG60);
+    let xVi60 = xV * Math.cos(-DEG60) - yV * Math.sin(-DEG60);
+    let yVi60 = xV * Math.sin(-DEG60) + yV * Math.cos(-DEG60);
     let angle = Math.atan2(yV, xV) - DEG90;
-    let velocity = 4;
+    let velocity = 3;
     this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xV, yV, velocity, angle));
-    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xV45, yV45, velocity, angle + DEG45));
-    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xVi45, yVi45, velocity, angle - DEG45));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xV60, yV60, velocity, angle + DEG60));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xVi60, yVi60, velocity, angle - DEG60));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xV, yV, velocity * 0.85, angle));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xV60, yV60, velocity * 0.85, angle + DEG60));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xVi60, yVi60, velocity * 0.85, angle - DEG60));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xV, yV, velocity * 0.7, angle));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xV60, yV60, velocity * 0.7, angle + DEG60));
+    this.gameObjects.push(new LightblueArrowhead(xBase, yBase, xVi60, yVi60, velocity * 0.7, angle - DEG60));
     return 1;
   }
   update = () => {
     if (this.pause) return;
     // barrages
-    (this.interval < (25 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.interval % (10 * this.frameRate) != 0 && this.fireSpreadBarrageV1());
-    (this.interval >= (13 * this.frameRate) && this.interval < (43 * this.frameRate)&& this.interval % (2 * this.frameRate) == 0 && this.fireSpreadBarrageV2());
-    (this.interval >= (13 * this.frameRate) && this.interval < (43 * this.frameRate)&& this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.fireSpreadBarrageV3());
-    (this.interval >= (28 * this.frameRate) && this.interval < (43 * this.frameRate) && this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.fireSpreadBarrageV2());
-    (this.interval >= (28 * this.frameRate) && this.interval < (43 * this.frameRate) && this.interval % (2 * this.frameRate) == 0 && this.fireSpreadBarrageV3());
-    (this.interval > (40 * this.frameRate) && this.interval % (2.5 * this.frameRate) == 0 && this.fireStraightBarrageV1());
-    (this.interval > (50 * this.frameRate) && this.interval % (2.5 * this.frameRate) == (1.25 * this.frameRate) && this.fireStraightBarrageV1());
-    (this.interval >= (2 * this.frameRate) && this.interval < (35 * this.frameRate) && this.interval % (2 * this.frameRate) < (0.5 * this.frameRate) && this.interval % (0.05 * this.frameRate) == 0 && this.fireAimedBarrageV2());
-    (this.interval >= (10 * this.frameRate) && this.interval < (30 * this.frameRate) && this.interval % (3 * this.frameRate) == 0 && this.fireAimedBarrageV1());
+    (this.interval < (25 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.interval % (10 * this.frameRate) != 0 && this.fireStarBarrage());
+    (this.interval >= (13 * this.frameRate) && this.interval < (41 * this.frameRate)&& this.interval % (2 * this.frameRate) == 0 && this.firePurpleOfuda());
+    (this.interval >= (13 * this.frameRate) && this.interval < (41 * this.frameRate)&& this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.fireRedOfuda());
+    (this.interval >= (26 * this.frameRate) && this.interval < (41 * this.frameRate) && this.interval % (2 * this.frameRate) == (1 * this.frameRate) && this.firePurpleOfuda());
+    (this.interval >= (26 * this.frameRate) && this.interval < (41 * this.frameRate) && this.interval % (2 * this.frameRate) == 0 && this.fireRedOfuda());
+    (this.interval > (38 * this.frameRate) && this.interval % (3 * this.frameRate) == 0 && this.fireStraightBarrageV1());
+    (this.interval > (47 * this.frameRate) && this.interval % (3 * this.frameRate) == (0 * this.frameRate) && this.fireConvergingButterflyBarrage());
+    (this.interval > (47 * this.frameRate) && this.interval % (3 * this.frameRate) == (1.5 * this.frameRate) && this.fireDivergingButterflyBarrage());
+    (this.interval >= (2 * this.frameRate) && this.interval < (30 * this.frameRate) && this.interval % (2 * this.frameRate) < (0.5 * this.frameRate) && this.interval % (0.05 * this.frameRate) == 0 && this.fireAimedBarrageV2());
+    (this.interval >= (10 * this.frameRate) && this.interval < (28 * this.frameRate) && this.interval % (3 * this.frameRate) == 0 && this.fireAimedBarrageV1());
     // (this.interval >= (53 * this.frameRate) && this.interval % (1 * this.frameRate) < (0.7 * this.frameRate) && this.interval % (0.1 * this.frameRate) == 0 && this.fireAimedBarrageV2());
-    (this.interval >= (44 * this.frameRate) && this.interval < (48 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.fireAimedBarrageV3());
-    (this.interval >= (48 * this.frameRate) && this.interval % (0.1 * this.frameRate) == 0 && this.fireAimedBarrageV4());
+    (this.interval >= (42 * this.frameRate) && this.interval < (46 * this.frameRate) && this.interval % (0.5 * this.frameRate) == 0 && this.fireAimedBarrageV3());
+    (this.interval >= (46 * this.frameRate) && this.interval % (0.2 * this.frameRate) == 0 && this.fireAimedBarrageV4());
     // normal game tick stuff
     this.interval += 1;
     this.gameCtx.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
@@ -401,6 +451,7 @@ export default class GameController extends GameObject {
     this.gameCtx.fillStyle = 'red';
     this.gameCtx.fillText(`Game over`, 15, 260, this.gameCanvas.width);
     this.gameover = true;
+    this.pause = true;
     window.dispatchEvent(new Event('die'));
     return 1;
   }
@@ -423,7 +474,7 @@ export default class GameController extends GameObject {
   intersects = (o1, o2) => {
     let distance = Math.sqrt(Math.pow(o1.x - o2.x, 2) + Math.pow(o1.y - o2.y, 2));
     let deathDistance = o1.r + o2.r;
-    let grazeDistance = o1.r * 4 + o2.r * 2;
+    let grazeDistance = o1.r * 6 + o2.r * 2;
     (distance < deathDistance && this.stopGameLose());
     // true if grazed, false if not
     return (distance < grazeDistance);
@@ -480,8 +531,8 @@ class Entity extends GameObject {
 class Player extends Entity {
   constructor(x, y) {
     super(x, y);
-    this.radius = 4;
-    this.velocity = 1.8;
+    this.radius = 2;
+    this.velocity = 2;
     this.focusedSlowdown = 0.65;
     this.spriteTable = {};
     this.spriteTable[0] = PLAYERSPRITEUNFOCUSED;
@@ -489,13 +540,16 @@ class Player extends Entity {
     this.currentSprite = this.spriteTable[0];
     this.rotateCurrent = 0;
     this.rotateAngle = DEG5 / 5 * 2;
-    this.realHitbox = 0.8;
+    this.realHitbox = 1;
   }
   draw = () => {
-    this.gameCtx.translate(this.x, this.y);
-    this.gameCtx.rotate(this.rotateCurrent);
-    this.gameCtx.translate(-this.x, -this.y);
-    this.gameCtx.drawImage(PLAYERSPRITEBASE, this.x - 32, this.y - 32, 64, 64);
+    // (this.currentSprite == PLAYERSPRITEUNFOCUSED && this.gameCtx.drawImage(PLAYERSPRITEBASE, this.x - 32, this.y - 32, 64, 64));
+    if (this.currentSprite == PLAYERSPRITEUNFOCUSED) {
+      this.gameCtx.translate(this.x, this.y);
+      this.gameCtx.rotate(this.rotateCurrent);
+      this.gameCtx.translate(-this.x, -this.y);
+      this.gameCtx.drawImage(PLAYERSPRITEBASE, this.x - 32, this.y - 32, 64, 64);
+    }
     this.gameCtx.translate(this.x, this.y);
     this.gameCtx.rotate(this.rotateCurrent);
     this.gameCtx.translate(-this.x, -this.y);
@@ -633,6 +687,27 @@ class LightblueArrowhead extends Bullet {
     this.gameCtx.rotate(DEG180 + this.angle);
     this.gameCtx.translate(-this.x, -this.y);
     this.gameCtx.drawImage(LIGHTBLUEARROWHEAD, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+    // this.gameCtx.translate(this.x, this.y);
+    // this.gameCtx.rotate(-this.rotateCurrent);
+    // this.gameCtx.translate(-this.x, -this.y);
+    this.gameCtx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+}
+
+class GreenButterfly extends Bullet {
+  constructor(x, y, xV, yV, vel, angle) {
+    super(x, y, xV, yV, vel);
+    this.radius = 8;
+    this.realHitbox = 0.4;
+    this.rotateAngle = (Math.random() + 0.002) * 0.05;
+    this.rotateCurrent = Math.random() * Math.PI;
+    this.angle = angle;
+  }
+  draw = () => {
+    this.gameCtx.translate(this.x, this.y);
+    this.gameCtx.rotate(DEG180 + this.angle);
+    this.gameCtx.translate(-this.x, -this.y);
+    this.gameCtx.drawImage(GREENBUTTERFLY, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
     // this.gameCtx.translate(this.x, this.y);
     // this.gameCtx.rotate(-this.rotateCurrent);
     // this.gameCtx.translate(-this.x, -this.y);
