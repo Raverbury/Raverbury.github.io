@@ -1,0 +1,146 @@
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#SingleInstance
+; #Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+; Should work for all touhou shooting games
+SetTimer, KeepRunning
+Return
+
+global autofire = false
+
+InGame(processName)
+{
+	gamelist := {}
+	gamelist[1] := "th08.exe"
+	gamelist[2] := "東方紅魔郷.exe"
+	gamelist[3] := "th18.exe"
+	gamelist[4] := "th17.exe"
+	gamelist[5] := "th14.exe"
+	gamelist[5] := "th15.exe"
+	gamelist[6] := "th07.exe"
+	for i, element in gamelist
+	{
+		if (processName = element)
+		{
+			Return true
+		}
+	}
+	Return false
+}
+
+KeepRunning:
+
+WinGet, szProcessName, ProcessName, A
+if InGame(szProcessName)
+{
+	Suspend, off 
+	*s::
+		autofire = not autofire
+		if (autofire)
+		{
+			SetKeyDelay -1
+			Send {Blind}{z DownR}
+		}
+		else
+		{
+	      		SetKeyDelay -1
+			Send {Blind}{z Up}
+		}
+		Return
+	~z::
+		autofire = false
+		if (autofire)
+		{
+			SetKeyDelay -1
+			Send {Blind}{z DownR}
+		}
+		else
+		{
+	      		SetKeyDelay -1
+			Send {Blind}{z Up}
+		}
+		Return
+	~F2::
+		autofire = false
+		SetKeyDelay -1
+		Send {Blind}{z Up}
+		Return
+	;w::x
+	;a::c
+	;p::Up
+	;l::Left
+	SC27::Down
+	SC28::Right
+	#p::
+		sleep, 150
+		Run, C:\Games\Touhou\thprac.exe, C:\Games\Touhou,, process_id
+		winWait, ahk_pid %process_id%
+		winActivate, ahk_pid %process_id%
+		Return
+}
+else
+{
+	Suspend, on
+	autofire = false
+}
+Return
+
+
+/*
+Legacy script for touhou 6
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+; #Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+SetTimer, KeepRunning
+return
+
+global zToggled = false
+
+KeepRunning:
+
+WinGet, szProcessName, ProcessName, A
+if szProcessName = 東方紅魔郷.exe
+{
+  Suspend, off 
+  t::
+    zToggled := not zToggled
+    if (zToggled)
+    {
+      Send {z down}
+    }
+    else
+    {
+      Send {z up}
+    }
+    Return
+  ~z::
+    if (zToggled)
+    {
+      zToggled := false
+      Send {z up}
+    }
+    Return
+  ~F2::
+    if (zToggled)
+    {
+      zToggled := false
+      Send {z up}
+    }
+  Return
+  w::Up
+  a::Left
+  s::Down
+  d::Right
+  RShift::x
+  Space::x
+}
+else
+{
+  Suspend, on
+  zToggled := false
+}
+return
+*/
