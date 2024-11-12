@@ -2,73 +2,149 @@
 <html lang="en">
 
 <head>
-  <title>TNATR</title>
-  <meta charset="UTF-8">
-  <meta name="description" content="A sort of practice project about making games using canvas">
-  <meta name="keywords" content="Touhou, Imperishable Night, 4Fun">
-  <meta name="author" content="Raverbury">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Own stylesheet -->
-  <link rel="stylesheet" href="main.css">
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Howler -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js" integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khoa's EHAMP</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- FA icons 4 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
-  <!-- Canvas -->
-  <div class="container mt-2">
-    <h1>Totally Not A Touhou Ripoff - Extra</h1>
-    <div id="app" class="container bg-secondary py-2 d-flex justify-content-center">
-      <div id="canvasArea" class="d-flex">
-        <canvas id="gameCanvas" width="420" height="480"></canvas>
-        <canvas id="scoreCanvas" width="220" height="480"></canvas><br>
-      </div>
-    </div>
-  </div>
-  <!-- Modal -->
-  <div class="container">
-    <div class="modal fade" id="instructionModal" aria-labelledby="exampleModalLabel">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Instructions</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>Use WASD or arrow keys to move. Hold Shift to slow your movement and highlight your actual hitbox.</p>
-            <p>Press X to bomb and clear the screen of bullets. For each bullet cleared this way, you also gain points.</p>
-            <p>Press Space to start/pause/resume/restart game.</p>
-            <p>Your goal is to survive for 60 seconds and earn as many points as possible by grazing (getting close to bullets without getting hit). Unused bombs are also converted into points.</p><br>
-            <p>I do not own the rights to any image or sound used. All assets are copyrighted to ZUN.</p>
-            <p>Spritesheet is provided by Gabrielwoj.</p>
-            <p>PS: Sounds may not play properly on the first few tries. Reload this page and wait a bit before starting may help.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Hidden -->
-  <div class="hidden">
-    <img id="background" src="imgs/th8_extra_bg.jpg" alt="Background" width="420" height="480">
-    <img id="purple_bullet_ball" src="imgs/purple_bullet_ball.png" alt="Purple ball" width="16" height="16">
-    <img id="yellow_star_small" src="imgs/yellow_star_small.png" alt="Yellow star small" width="16" height="16">
-    <img id="red_ofuda" src="imgs/red_ofuda.png" alt="Red ofuda" width="12" height="14">
-    <img id="purple_ofuda" src="imgs/purple_ofuda.png" alt="Purple ofuda" width="12" height="14">
-    <img id="black_outlined_ball" src="imgs/black_outlined_ball.png" alt="Black outlined ball" width="16" height="16">
-    <img id="lightblue_arrowhead" src="imgs/lightblue_arrowhead.png" alt="Lightblue arrowhead" width="12" height="14">
-    <img id="green_butterfly" src="imgs/green_butterfly.png" alt="Green butterfly" width="28" height="28">
-    <img id="player_sprite_focused" src="imgs/player_sprite_focused.png" alt="Player sprite focused" width="64" height="64">
-    <img id="player_sprite_unfocused" src="imgs/player_sprite_unfocused.png" alt="Player sprite unfocused" width="64" height="64">
-    <img id="player_sprite_base" src="imgs/player_sprite_base.png" alt="Player sprite base" width="64" height="64">
-  </div>
-  <script type="module" src="main.js"></script>
+    <header>
+        <div class="container">
+            <h1>Khoa's Extraordinarily Humble And Minimal Portfolio</h1>
+            <nav>
+                <ul>
+                    <!-- anchor links -->
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <!-- game demos -->
+                    <li><a href="yatk/index.html">YATK demo</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="dialog" class="dialog-info">
+        <div class="container">
+            <p>
+                <i class="fa fa-info-circle bullet"></i>If you are looking for TNATR, it has been moved <a
+                    href="tnatr/index.html">here</a>.
+            </p>
+            <!-- <p>
+                <i class="fa fa-info-circle bullet"></i>Quick handy links to game demos for <a
+                    href="yatk/index.html">YATK</a> or <a href="tnatr/index.html">TNATR</a>.
+            </p> -->
+        </div>
+    </section>
+
+    <section id="about" class="content">
+        <div class="container">
+            <h2>About me</h2>
+            <p>Hello there! I am Khoa, an aspiring game developer that has also dipped my toes in some other areas of
+                programming with at least something to show. I am rather <abbr
+                    title="with an IELTS 8.0 to back it up">proficient in English</abbr>, to
+                the point where I would say more so than my Vietnamese. Having graduated with a Bachelor degree in
+                Computer Science at Ho Chi Minh City University of Technology in late 2023 with only a couple of months
+                of experience working professionally, I am hungry to expand my knowledge and look to constantly
+                challenge myself mentally through coding <s>to question my perception of realities and perhaps my very
+                    own existence</s>.
+            </p>
+        </div>
+    </section>
+
+    <section id="projects" class="content">
+        <div class="container">
+            <h2>Projects</h2>
+            <p>My best projects are listed here (but you can find more on my <a href="#github">GitHub</a>).
+            </p>
+            <br>
+            <!-- aggro indicator -->
+            <div class="project">
+                <h3>Aggro Indicator</h3>
+                <p>This is a Minecraft Java Edition mod that shows an alert icon above mobs that want to hit you. No
+                    longer will you have to ask if that thing is approaching you by coincedence or not. You can find it
+                    on <a href="https://www.curseforge.com/minecraft/mc-mods/aggro-indicator">CurseForge</a> or <a
+                        href="https://modrinth.com/mod/aggroindicator/">Modrinth</a>.</p>
+            </div>
+            <!-- yatk -->
+            <div class="project">
+                <h3>YATK</h3>
+                <p>This is a bullet hell game very much inspired by Touhou, perhaps a bit too much. It is built with
+                    Unity and is in my honest opinion the game that I have put the most effort into out of all the games
+                    I have made.</p>
+                <p>You can try it <a href="yatk/index.html">here</a>. The primary controls are ARROWS, Z, X and ESC
+                    keys.</p>
+            </div>
+            <!-- tnatr -->
+            <div class="project">
+                <h3>
+                    <abbr title="Totally Not Another Touhou Ripoff">TNATR</abbr>
+                </h3>
+                <p>The old link has been moved here. This was my second attempt ever at making a game, one that is so
+                    primitive that it tries to replicate what I did for my first game, which revolves around very
+                    primitive graphics and shapes. Made with pure HTML, JS and CSS for good measures, this is a bullet
+                    hell game where you dodge things that are shot at you and try to survive.</p>
+                <p>You can try it <a href="tnatr/index.html">here</a>. The primary controls are ARROWS, Z, X and ESC
+                    keys.
+                </p>
+            </div>
+            <!-- example0 -->
+            <div class="project">
+                <h3>
+                    example0
+                </h3>
+                <p>You may think that my projects are heavily game-skewed, and you would be right, but throughout the
+                    years I have also worked on many other fields of programming, namely web programming with PHP.
+                    Briefly going over them, I have an amateur pure PHP app I made while studying, a full-blown Laravel
+                    group capstone project with third party service integration and hosting, and my latest Laravel VueJS
+                    app that I made to learn more about GraphQL and VueJS in my free time. While it probably does not
+                    amount to much, I hope that it at least shows that I am not just a game nerd.</p>
+            </div>
+
+            <p>Disclaimer: Plenty of the projects I have on GitHub are finished works, it is just that I do not have a
+                habbit of releasing builds for most projects, even more so for the niche/personal use ones. For those
+                without a release, you will likely need to build or set them up yourself, instructions are probably
+                included
+                in the READMEs, if not then that is 3417% on me and I deserve to be crucified.</p>
+        </div>
+    </section>
+
+    <section id="contact" class="content">
+        <div class="container">
+            <h2>Contact</h2>
+            <p>As it so happens to be, I am on a job hunt and have been for some time. If my humble profile catches your
+                interest, you can reach out to me...</p>
+            <div class="contact">
+                <h3><i class="fa fa-envelope bullet"></i>By email (prefereably) at</h3>
+                <p>
+                    <a href="mailto:kdsandfloofer@gmail.com">kdsandfloofer@gmail.com</a>
+                </p>
+            </div>
+            <div id="github" class="contact">
+                <h3><i class="fa fa-github bullet"></i>On GitHub at</h3>
+                <p>
+                    <a href="https://github.com/Raverbury">https://github.com/Raverbury</a>
+                </p>
+            </div>
+            <!-- <div class="contact">
+                <h3><i class="fa fa-phone bullet"></i>By phone</h3>
+                <p>
+                    at +84 343 191 836
+                </p>
+            </div> -->
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Do Dang Khoa. All rights reserved.</p>
+        </div>
+    </footer>
+
 </body>
 
 </html>
