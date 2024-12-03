@@ -79,6 +79,10 @@ footer {
     padding: 10px 0;
 }
 
+img.preview {
+    width: 40%;
+}
+
 /* Responsive styling */
 @media (max-width: 768px) {
     nav ul {
